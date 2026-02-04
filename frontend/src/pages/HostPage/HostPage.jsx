@@ -108,6 +108,12 @@ const HostPage = () => {
       case 'vote_update':
         setVoteResults(data.options);
         setVotedCount(data.voted_count);
+        // 更新用户投票状态
+        if (data.voted_token) {
+          setUsers(prev => prev.map(u => 
+            u.token === data.voted_token ? { ...u, voted: true } : u
+          ));
+        }
         break;
         
       case 'status_change':

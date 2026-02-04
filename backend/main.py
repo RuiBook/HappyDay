@@ -414,7 +414,8 @@ async def submit_vote(request: VoteRequest):
         "data": {
             "options": [opt.model_dump() for opt in store.options.values()],
             "voted_count": len([u for u in store.users.values() if u.get("voted", False) and not u.get("eliminated", False)]),
-            "user_count": len([u for u in store.users.values() if not u.get("eliminated", False)])
+            "user_count": len([u for u in store.users.values() if not u.get("eliminated", False)]),
+            "voted_token": request.token  # 新增：投票用户的token
         }
     })
     
