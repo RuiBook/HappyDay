@@ -51,6 +51,7 @@ def get_round_title(round_num: int) -> Optional[str]:
 class UserRegisterRequest(BaseModel):
     """用户注册请求"""
     name: str = Field(..., min_length=1, max_length=20, description="用户姓名")
+    session_id: Optional[str] = Field(None, description="会话ID")
     
     @field_validator('name')
     @classmethod
@@ -130,6 +131,13 @@ class DataStore:
         self.eliminated_users: Set[str] = set()
         # 每轮历史记录
         self.round_history: List[dict] = []
+        # 会话ID（二维码刷新用）
+        self.session_id: str = str(uuid.uuid4())[:8]
+    
+    def refresh_session(self):
+        """刷新会话ID，使旧二维码失效"""
+        self.session_id = str(uuid.uuid4())[:8]
+        return self.session_id
     
     def get_user_names(self) -> Set[str]:
         """获取所有已注册的用户名"""
@@ -258,14 +266,39 @@ async def get_config():
         "round": store.round,
         "options": [opt.model_dump() for opt in store.options.values()],
         "user_count": len([u for u in store.users.values() if not u.get("eliminated", False)]),
-        "voted_count": len([u for u in store.users.values() if u.get("voted", False) and not u.get("eliminated", False)])
+        "voted_count": len([u for u in store.users.values() if u.get("voted", False) and not u.get("eliminated", False)]),
+        "session_id": store.session_id
     }
+
+
+@app.get("/api/session")
+async def get_session():
+    """获取当前会话ID"""
+    return {"session_id": store.session_id}
+
+
+@app.post("/api/host/refresh-qrcode")
+async def refresh_qrcode():
+    """刷新二维码（使旧二维码失效）"""
+    new_session_id = store.refresh_session()
+    
+    # 广播给主持人
+    await manager.broadcast_to_hosts({
+        "type": "session_refreshed",
+        "data": {"session_id": new_session_id}
+    })
+    
+    return {"success": True, "session_id": new_session_id, "message": "二维码已刷新"}
 
 
 @app.post("/api/user/register", response_model=UserRegisterResponse)
 async def register_user(request: UserRegisterRequest):
     """用户注册（姓名校验）"""
     try:
+        # 验证会话ID（如果提供了的话）
+        if request.session_id and request.session_id != store.session_id:
+            raise HTTPException(status_code=400, detail="二维码已过期，请扫描最新二维码")
+        
         # 检查用户名是否已存在，如果存在则返回原有token和状态
         existing_token = store.get_token_by_name(request.name)
         if existing_token:
@@ -708,6 +741,7 @@ async def websocket_host(websocket: WebSocket):
                 "status": store.game_status,
                 "round": store.round,
                 "options": [opt.model_dump() for opt in store.options.values()],
+                "session_id": store.session_id,
                 "users": [
                     {
                         "token": token,
