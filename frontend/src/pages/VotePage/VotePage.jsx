@@ -20,8 +20,20 @@ const VotePage = () => {
   const [round, setRound] = useState(1);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   
+  // 会话ID（从URL获取）
+  const [sessionId, setSessionId] = useState('');
+  
   // WebSocket 引用
   const wsRef = useRef(null);
+
+  // 从 URL 获取 session_id
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sid = params.get('s');
+    if (sid) {
+      setSessionId(sid);
+    }
+  }, []);
 
   // 校验姓名
   const validateName = (name) => {
@@ -49,7 +61,7 @@ const VotePage = () => {
     setError('');
     
     try {
-      const result = await api.registerUser(playerName.trim());
+      const result = await api.registerUser(playerName.trim(), sessionId || null);
       
       if (result.success) {
         setToken(result.token);

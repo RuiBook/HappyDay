@@ -1,7 +1,7 @@
 // 游戏配置文件
 export const gameConfig = {
   // 游戏标题
-  title: '二维码投票小游戏',
+  title: '创新技术-少数派年会小游戏',
   
   // 主持人页面配置
   host: {

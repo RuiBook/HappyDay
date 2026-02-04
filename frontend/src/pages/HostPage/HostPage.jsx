@@ -25,6 +25,9 @@ const HostPage = () => {
   // 历史记录
   const [roundHistory, setRoundHistory] = useState([]);
   
+  // 会话ID（二维码）
+  const [sessionId, setSessionId] = useState('');
+  
   // 加载和错误状态
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -88,6 +91,9 @@ const HostPage = () => {
           setUsers(data.users);
           setVotedCount(data.users.filter(u => u.voted && !u.eliminated).length);
         }
+        if (data.session_id) {
+          setSessionId(data.session_id);
+        }
         setError('');
         break;
         
@@ -122,6 +128,10 @@ const HostPage = () => {
           eliminated: data.eliminated_tokens?.includes(u.token) || u.eliminated,
           voted: false
         })));
+        break;
+        
+      case 'session_refreshed':
+        setSessionId(data.session_id);
         break;
         
       case 'game_reset':
@@ -191,6 +201,36 @@ const HostPage = () => {
   useEffect(() => {
     fetchHistory();
   }, [round, fetchHistory]);
+
+  // 初始化获取会话ID
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const result = await api.getSession();
+        setSessionId(result.session_id);
+      } catch (err) {
+        console.error('获取会话ID失败:', err);
+      }
+    };
+    fetchSession();
+  }, []);
+
+  // 刷新二维码
+  const refreshQRCode = async () => {
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      const result = await api.refreshQRCode();
+      setSessionId(result.session_id);
+      setSuccessMsg('二维码已刷新，旧二维码已失效');
+      setTimeout(() => setSuccessMsg(''), 3000);
+    } catch (err) {
+      setError(err.message || '刷新二维码失败');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // 加载预设选项
   const loadPreset = async () => {
@@ -354,9 +394,17 @@ const HostPage = () => {
         <section className="host-page__qrcode">
           <h2>扫码加入游戏</h2>
           <div className="host-page__qrcode-wrapper">
-            <QRCodeSVG value={getVotePageUrl()} size={200} />
+            <QRCodeSVG value={getVotePageUrl(sessionId)} size={200} />
           </div>
-          <p className="host-page__url">{getVotePageUrl()}</p>
+          <p className="host-page__url">{getVotePageUrl(sessionId)}</p>
+          <button 
+            onClick={refreshQRCode} 
+            className="host-page__btn host-page__btn--refresh"
+            disabled={isLoading}
+          >
+            🔄 刷新二维码
+          </button>
+          <p className="host-page__session-hint">刷新后旧二维码将失效</p>
         </section>
 
         <section className="host-page__options">

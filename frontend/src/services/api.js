@@ -56,9 +56,9 @@ export const api = {
   getConfig: () => request('/api/config'),
   
   // 用户注册
-  registerUser: (name) => request('/api/user/register', {
+  registerUser: (name, sessionId = null) => request('/api/user/register', {
     method: 'POST',
-    body: JSON.stringify({ name }),
+    body: JSON.stringify({ name, session_id: sessionId }),
   }),
   
   // 获取用户状态
@@ -105,6 +105,12 @@ export const api = {
   
   // 主持人 - 获取历史记录
   getHistory: () => request('/api/host/history'),
+  
+  // 主持人 - 刷新二维码
+  refreshQRCode: () => request('/api/host/refresh-qrcode', { method: 'POST' }),
+  
+  // 获取会话ID
+  getSession: () => request('/api/session'),
 };
 
 /**
@@ -179,9 +185,12 @@ export function createUserWebSocket(token, onMessage, onError, onClose) {
 /**
  * 获取投票页面URL（用于二维码）
  */
-export function getVotePageUrl() {
+export function getVotePageUrl(sessionId = '') {
   // 使用当前域名
   const baseUrl = window.location.origin;
+  if (sessionId) {
+    return `${baseUrl}/vote?s=${sessionId}`;
+  }
   return `${baseUrl}/vote`;
 }
 
