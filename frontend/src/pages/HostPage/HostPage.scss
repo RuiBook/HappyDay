@@ -115,11 +115,23 @@
   }
 
   &__content {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 24px;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
+  }
+
+  &__top-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+
+  &__right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
 
   &__qrcode {
@@ -308,7 +320,6 @@
 
   &__players-list {
     @include card-base;
-    grid-column: span 2;
 
     h2 {
       font-size: 18px;
@@ -319,7 +330,7 @@
 
   &__players-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
     gap: 12px;
   }
 
@@ -373,7 +384,6 @@
   // 历史记录样式
   &__history {
     @include card-base;
-    grid-column: span 2;
 
     h2 {
       font-size: 18px;
@@ -457,15 +467,37 @@
 }
 
 // 响应式
+@media (max-width: 1200px) {
+  .host-page {
+    &__top-row {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &__right-column {
+      grid-column: span 2;
+      flex-direction: row;
+    }
+
+    &__controls,
+    &__results {
+      flex: 1;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .host-page {
-    &__content {
+    &__top-row {
       grid-template-columns: 1fr;
     }
 
-    &__players-list,
-    &__history {
+    &__right-column {
       grid-column: span 1;
+      flex-direction: column;
+    }
+
+    &__players-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
 
     &__history-details {

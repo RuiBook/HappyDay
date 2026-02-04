@@ -372,7 +372,7 @@ const HostPage = () => {
         <h1 className="host-page__title">{gameConfig.title} - 主持人控制台</h1>
         <div className="host-page__info">
           <span className="host-page__round">第 {round} 轮</span>
-          <span className="host-page__players">在线玩家: {activeUsers.length}</span>
+          <span className="host-page__players">少数派玩家: {activeUsers.length}</span>
           <span className={`host-page__status host-page__status--${gameStatus}`}>
             {gameStatus === 'waiting' && '等待中'}
             {gameStatus === 'voting' && '投票中'}
@@ -388,146 +388,152 @@ const HostPage = () => {
       )}
 
       <div className="host-page__content">
-        <section className="host-page__qrcode">
-          <h2>扫码加入游戏</h2>
-          <div className="host-page__qrcode-wrapper">
-            <QRCodeSVG value={getVotePageUrl(sessionId)} size={200} />
-          </div>
-          <p className="host-page__url">{getVotePageUrl(sessionId)}</p>
-          <button 
-            onClick={refreshQRCode} 
-            className="host-page__btn host-page__btn--refresh"
-            disabled={isLoading}
-          >
-            🔄 刷新二维码
-          </button>
-          <p className="host-page__session-hint">刷新后旧二维码将失效</p>
-        </section>
-
-        <section className="host-page__options">
-          <h2>设置选项 {presetTitle && `- ${presetTitle}`}</h2>
-          
-          {gameStatus === 'waiting' && (
-            <div className="host-page__preset-info">
-              {hasPreset ? (
-                <div className="host-page__preset-badge host-page__preset-badge--has">
-                  ✓ 当前轮次有预设选项
-                  <button 
-                    onClick={loadPreset} 
-                    className="host-page__preset-btn"
-                    disabled={isLoading}
-                  >
-                    重新加载预设
-                  </button>
-                </div>
-              ) : (
-                <div className="host-page__preset-badge host-page__preset-badge--none">
-                  ⚠ 当前轮次无预设选项，请手动设置
-                </div>
-              )}
+        {/* 第一行：扫码 | 设置选项 | 游戏控制+投票结果 */}
+        <div className="host-page__top-row">
+          <section className="host-page__qrcode">
+            <h2>扫码加入游戏</h2>
+            <div className="host-page__qrcode-wrapper">
+              <QRCodeSVG value={getVotePageUrl(sessionId)} size={200} />
             </div>
-          )}
-          
-          <div className="host-page__options-list">
-            {inputOptions.map((option, index) => (
-              <div key={index} className="host-page__option-item">
-                <input
-                  type="text"
-                  value={option}
-                  onChange={(e) => updateOption(index, e.target.value)}
-                  disabled={gameStatus !== 'waiting' || isLoading}
-                  className="host-page__option-input"
-                  placeholder={`选项 ${index + 1}`}
-                />
-                {inputOptions.length > gameConfig.host.minOptions && gameStatus === 'waiting' && (
-                  <button
-                    onClick={() => removeOption(index)}
-                    className="host-page__option-remove"
-                    disabled={isLoading}
-                  >
-                    删除
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-          {inputOptions.length < gameConfig.host.maxOptions && gameStatus === 'waiting' && (
-            <button onClick={addOption} className="host-page__add-option" disabled={isLoading}>
-              + 添加选项
-            </button>
-          )}
-        </section>
-
-        <section className="host-page__controls">
-          <h2>游戏控制</h2>
-          <div className="host-page__buttons">
-            {gameStatus === 'waiting' && (
-              <button 
-                onClick={startVoting} 
-                className="host-page__btn host-page__btn--primary"
-                disabled={isLoading || activeUsers.length === 0}
-              >
-                {isLoading ? '处理中...' : '开始投票'}
-              </button>
-            )}
-            {gameStatus === 'voting' && (
-              <button 
-                onClick={endVoting} 
-                className="host-page__btn host-page__btn--success"
-                disabled={isLoading}
-              >
-                {isLoading ? '处理中...' : `结束投票 (${votedCount}/${activeUsers.length})`}
-              </button>
-            )}
-            {gameStatus === 'result' && (
-              <button 
-                onClick={nextRound} 
-                className="host-page__btn host-page__btn--primary"
-                disabled={isLoading}
-              >
-                {isLoading ? '处理中...' : '下一轮（淘汰多数派+未投票）'}
-              </button>
-            )}
+            <p className="host-page__url">{getVotePageUrl(sessionId)}</p>
             <button 
-              onClick={resetGame} 
-              className="host-page__btn host-page__btn--danger"
+              onClick={refreshQRCode} 
+              className="host-page__btn host-page__btn--refresh"
               disabled={isLoading}
             >
-              重置游戏
+              🔄 刷新二维码
             </button>
-          </div>
-        </section>
+            <p className="host-page__session-hint">刷新后旧二维码将失效</p>
+          </section>
 
-        <section className="host-page__results">
-          <h2>投票结果 {gameStatus === 'voting' && `(投票中: ${votedCount}/${activeUsers.length})`}</h2>
-          {gameStatus === 'result' && voteResults.length > 0 ? (
-            <div className="host-page__results-chart">
-              {voteResults.map((option) => {
-                const count = option.votes || 0;
-                const percentage = totalVotes > 0 ? (count / totalVotes * 100).toFixed(1) : 0;
-                return (
-                  <div key={option.id} className="host-page__result-item">
-                    <div className="host-page__result-label">
-                      <span>{option.name}</span>
-                      <span>{count} 票 ({percentage}%)</span>
-                    </div>
-                    <div className="host-page__result-bar">
-                      <div
-                        className="host-page__result-fill"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
+          <section className="host-page__options">
+            <h2>设置选项 {presetTitle && `- ${presetTitle}`}</h2>
+            
+            {gameStatus === 'waiting' && (
+              <div className="host-page__preset-info">
+                {hasPreset ? (
+                  <div className="host-page__preset-badge host-page__preset-badge--has">
+                    ✓ 当前轮次有预设选项
+                    <button 
+                      onClick={loadPreset} 
+                      className="host-page__preset-btn"
+                      disabled={isLoading}
+                    >
+                      重新加载预设
+                    </button>
                   </div>
-                );
-              })}
+                ) : (
+                  <div className="host-page__preset-badge host-page__preset-badge--none">
+                    ⚠ 当前轮次无预设选项，请手动设置
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <div className="host-page__options-list">
+              {inputOptions.map((option, index) => (
+                <div key={index} className="host-page__option-item">
+                  <input
+                    type="text"
+                    value={option}
+                    onChange={(e) => updateOption(index, e.target.value)}
+                    disabled={gameStatus !== 'waiting' || isLoading}
+                    className="host-page__option-input"
+                    placeholder={`选项 ${index + 1}`}
+                  />
+                  {inputOptions.length > gameConfig.host.minOptions && gameStatus === 'waiting' && (
+                    <button
+                      onClick={() => removeOption(index)}
+                      className="host-page__option-remove"
+                      disabled={isLoading}
+                    >
+                      删除
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
-          ) : (
-            <p className="host-page__no-data">
-              {gameStatus === 'voting' ? '投票进行中，结束后显示结果...' : '暂无投票数据'}
-            </p>
-          )}
-        </section>
+            {inputOptions.length < gameConfig.host.maxOptions && gameStatus === 'waiting' && (
+              <button onClick={addOption} className="host-page__add-option" disabled={isLoading}>
+                + 添加选项
+              </button>
+            )}
+          </section>
 
+          <div className="host-page__right-column">
+            <section className="host-page__controls">
+              <h2>游戏控制</h2>
+              <div className="host-page__buttons">
+                {gameStatus === 'waiting' && (
+                  <button 
+                    onClick={startVoting} 
+                    className="host-page__btn host-page__btn--primary"
+                    disabled={isLoading || activeUsers.length === 0}
+                  >
+                    {isLoading ? '处理中...' : '开始投票'}
+                  </button>
+                )}
+                {gameStatus === 'voting' && (
+                  <button 
+                    onClick={endVoting} 
+                    className="host-page__btn host-page__btn--success"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? '处理中...' : `结束投票 (${votedCount}/${activeUsers.length})`}
+                  </button>
+                )}
+                {gameStatus === 'result' && (
+                  <button 
+                    onClick={nextRound} 
+                    className="host-page__btn host-page__btn--primary"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? '处理中...' : '下一轮（淘汰多数派+未投票）'}
+                  </button>
+                )}
+                <button 
+                  onClick={resetGame} 
+                  className="host-page__btn host-page__btn--danger"
+                  disabled={isLoading}
+                >
+                  重置游戏
+                </button>
+              </div>
+            </section>
+
+            <section className="host-page__results">
+              <h2>投票结果 {gameStatus === 'voting' && `(投票中: ${votedCount}/${activeUsers.length})`}</h2>
+              {gameStatus === 'result' && voteResults.length > 0 ? (
+                <div className="host-page__results-chart">
+                  {voteResults.map((option) => {
+                    const count = option.votes || 0;
+                    const percentage = totalVotes > 0 ? (count / totalVotes * 100).toFixed(1) : 0;
+                    return (
+                      <div key={option.id} className="host-page__result-item">
+                        <div className="host-page__result-label">
+                          <span>{option.name}</span>
+                          <span>{count} 票 ({percentage}%)</span>
+                        </div>
+                        <div className="host-page__result-bar">
+                          <div
+                            className="host-page__result-fill"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="host-page__no-data">
+                  {gameStatus === 'voting' ? '投票进行中，结束后显示结果...' : '暂无投票数据'}
+                </p>
+              )}
+            </section>
+          </div>
+        </div>
+
+        {/* 第二行：玩家列表 */}
         <section className="host-page__players-list">
           <h2>玩家列表 ({users.length})</h2>
           {users.length > 0 ? (
@@ -554,40 +560,40 @@ const HostPage = () => {
           )}
         </section>
 
-        {/* 历史记录 */}
+        {/* 第三行：历史记录 */}
         <section className="host-page__history">
-          <h2>历史记录</h2>
-          {roundHistory.length > 0 ? (
-            <div className="host-page__history-list">
-              {roundHistory.map((record) => (
-                <div key={record.round} className="host-page__history-item">
-                  <div className="host-page__history-header">
-                    <span className="host-page__history-round">第 {record.round} 轮</span>
-                    {record.is_tie && <span className="host-page__history-tie">平局</span>}
-                    <span className="host-page__history-options">
-                      {record.options.map(o => `${o.name}(${o.votes}票)`).join(' vs ')}
-                    </span>
-                  </div>
-                  <div className="host-page__history-details">
-                    <div className="host-page__history-survivors">
-                      <span className="host-page__history-label">胜出:</span>
-                      <span className="host-page__history-names host-page__history-names--success">
-                        {record.survivors.length > 0 ? record.survivors.join('、') : '无'}
+            <h2>历史记录</h2>
+            {roundHistory.length > 0 ? (
+              <div className="host-page__history-list">
+                {roundHistory.map((record) => (
+                  <div key={record.round} className="host-page__history-item">
+                    <div className="host-page__history-header">
+                      <span className="host-page__history-round">第 {record.round} 轮</span>
+                      {record.is_tie && <span className="host-page__history-tie">平局</span>}
+                      <span className="host-page__history-options">
+                        {record.options.map(o => `${o.name}(${o.votes}票)`).join(' vs ')}
                       </span>
                     </div>
-                    <div className="host-page__history-eliminated">
-                      <span className="host-page__history-label">淘汰:</span>
-                      <span className="host-page__history-names host-page__history-names--danger">
-                        {record.eliminated.length > 0 ? record.eliminated.join('、') : '无'}
-                      </span>
+                    <div className="host-page__history-details">
+                      <div className="host-page__history-survivors">
+                        <span className="host-page__history-label">胜出:</span>
+                        <span className="host-page__history-names host-page__history-names--success">
+                          {record.survivors.length > 0 ? record.survivors.join('、') : '无'}
+                        </span>
+                      </div>
+                      <div className="host-page__history-eliminated">
+                        <span className="host-page__history-label">淘汰:</span>
+                        <span className="host-page__history-names host-page__history-names--danger">
+                          {record.eliminated.length > 0 ? record.eliminated.join('、') : '无'}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="host-page__no-data">暂无历史记录</p>
-          )}
+                ))}
+              </div>
+            ) : (
+              <p className="host-page__no-data">暂无历史记录</p>
+            )}
         </section>
       </div>
     </div>
