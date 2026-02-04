@@ -1,16 +1,38 @@
-# React + Vite
+# HappyDay - 二维码投票游戏
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个实时互动的二维码投票小游戏，支持多人参与，主持人控制游戏流程。
 
-Currently, two official plugins are available:
+## 功能特点
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 扫码加入游戏
+- 实时投票和结果展示
+- 淘汰规则：多数派和未投票者被淘汰
+- 平局时不淘汰投票者
+- 每轮历史记录
+- 预设选项配置
 
-## React Compiler
+## 技术栈
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **前端**: React 19 + Vite 7 + SCSS
+- **后端**: Python FastAPI + WebSocket
 
-## Expanding the ESLint configuration
+## 运行方式
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 后端
+```bash
+cd backend
+pip install -r requirements.txt
+python main.py
+```
+
+### 前端
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## 访问地址
+
+- 主持人页面: http://localhost:5173/
+- 用户投票页面: 扫描主持人页面的二维码
