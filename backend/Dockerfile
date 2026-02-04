@@ -1,4 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/library/python:3.12-slim
+FROM crpi-h7ih5bh15ol8bsia.cn-hangzhou.personal.cr.aliyuncs.com/laibaostream/happyday-backend:3.12-slim
 
 WORKDIR /app
 
