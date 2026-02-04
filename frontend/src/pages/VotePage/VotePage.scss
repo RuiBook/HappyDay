@@ -1,0 +1,328 @@
+@import '../../styles/variables.scss';
+
+.vote-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  @include flex-center;
+
+  &--eliminated {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+  }
+
+  &__join {
+    @include card-base;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-color;
+    margin-bottom: 30px;
+  }
+
+  &__join-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__input {
+    padding: 16px 20px;
+    border: 2px solid $bg-color-dark;
+    border-radius: $border-radius;
+    font-size: 18px;
+    text-align: center;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+
+    &::placeholder {
+      color: $text-color-disabled;
+    }
+  }
+
+  &__btn {
+    @include button-base;
+    width: 100%;
+    font-size: 18px;
+    padding: 16px 24px;
+
+    &--primary {
+      @include button-primary;
+      width: 100%;
+      font-size: 18px;
+      padding: 16px 24px;
+    }
+  }
+
+  &__waiting {
+    @include card-base;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  &__player-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    background: $bg-color;
+    border-radius: $border-radius;
+    margin-bottom: 24px;
+  }
+
+  &__player-avatar {
+    font-size: 24px;
+  }
+
+  &__player-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: $text-color;
+  }
+
+  &__round {
+    padding: 4px 12px;
+    background: $primary-color;
+    color: $white;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+
+  &__waiting-content {
+    padding: 40px 20px;
+
+    p {
+      color: $text-color-secondary;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+  }
+
+  &__loader {
+    width: 50px;
+    height: 50px;
+    border: 4px solid $bg-color-dark;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  &__voting {
+    @include card-base;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  &__options {
+    text-align: center;
+
+    h2 {
+      font-size: 20px;
+      color: $text-color;
+      margin-bottom: 24px;
+    }
+  }
+
+  &__options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  &__option-btn {
+    padding: 30px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: $white;
+    border: none;
+    border-radius: $border-radius-lg;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition-normal;
+    box-shadow: $shadow-md;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: $shadow-lg;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  &__voted {
+    text-align: center;
+    padding: 20px;
+
+    h2 {
+      font-size: 20px;
+      color: $text-color;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: $text-color-secondary;
+      font-size: 16px;
+
+      strong {
+        color: $primary-color;
+      }
+    }
+  }
+
+  &__voted-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, $success-color 0%, #73d13d 100%);
+    border-radius: 50%;
+    @include flex-center;
+    font-size: 40px;
+    color: $white;
+    margin: 0 auto 20px;
+    box-shadow: $shadow-md;
+  }
+
+  &__result {
+    margin-top: 24px;
+  }
+
+  &__result-badge {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 24px;
+    font-size: 18px;
+    font-weight: 600;
+
+    &--success {
+      background: linear-gradient(135deg, $success-color 0%, #73d13d 100%);
+      color: $white;
+    }
+
+    &--fail {
+      background: linear-gradient(135deg, $error-color 0%, #ff7875 100%);
+      color: $white;
+    }
+  }
+
+  &__status {
+    @include card-base;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    padding: 40px;
+
+    h2 {
+      font-size: 24px;
+      color: $error-color;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: $text-color-secondary;
+      font-size: 16px;
+    }
+  }
+
+  &__status-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+  }
+
+  &__error {
+    color: $error-color;
+    font-size: 14px;
+    text-align: center;
+    margin: -8px 0 8px;
+  }
+
+  // 弹窗样式
+  &__modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    @include flex-center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+  }
+
+  &__modal {
+    @include card-base;
+    text-align: center;
+    padding: 40px;
+    max-width: 320px;
+    animation: slideUp 0.3s ease;
+
+    h3 {
+      font-size: 20px;
+      color: $text-color;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 14px;
+      color: $text-color-secondary;
+    }
+  }
+
+  &__modal-icon {
+    font-size: 60px;
+    margin-bottom: 16px;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+// 响应式
+@media (max-width: 480px) {
+  .vote-page {
+    padding: 16px;
+
+    &__options-grid {
+      grid-template-columns: 1fr;
+    }
+
+    &__option-btn {
+      padding: 24px 16px;
+      font-size: 18px;
+    }
+  }
+}

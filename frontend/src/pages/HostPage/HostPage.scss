@@ -1,0 +1,457 @@
+@import '../../styles/variables.scss';
+
+.host-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+
+  &__header {
+    @include flex-center;
+    flex-direction: column;
+    margin-bottom: 30px;
+    color: $white;
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &__info {
+    display: flex;
+    gap: 20px;
+  }
+
+  &__round,
+  &__players,
+  &__status {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+
+    &--waiting {
+      background: rgba(250, 173, 20, 0.3);
+    }
+
+    &--voting {
+      background: rgba(82, 196, 26, 0.3);
+    }
+
+    &--result {
+      background: rgba(24, 144, 255, 0.3);
+    }
+  }
+
+  &__error-banner {
+    background: rgba(255, 77, 79, 0.9);
+    color: $white;
+    padding: 12px 20px;
+    border-radius: $border-radius;
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__success-banner {
+    background: rgba(82, 196, 26, 0.9);
+    color: $white;
+    padding: 12px 20px;
+    border-radius: $border-radius;
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__preset-info {
+    margin-bottom: 16px;
+  }
+
+  &__preset-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: $border-radius;
+    font-size: 14px;
+
+    &--has {
+      background: #e6f7ff;
+      color: $primary-color;
+      border: 1px solid $primary-color;
+    }
+
+    &--none {
+      background: #fffbe6;
+      color: #d48806;
+      border: 1px solid #ffe58f;
+    }
+  }
+
+  &__preset-btn {
+    padding: 6px 12px;
+    background: $primary-color;
+    color: $white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:hover:not(:disabled) {
+      background: $primary-color-dark;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__qrcode {
+    @include card-base;
+    text-align: center;
+
+    h2 {
+      font-size: 18px;
+      color: $text-color;
+      margin-bottom: 20px;
+    }
+  }
+
+  &__qrcode-wrapper {
+    @include flex-center;
+    padding: 20px;
+    background: $white;
+    border-radius: $border-radius;
+    margin-bottom: 16px;
+  }
+
+  &__url {
+    font-size: 12px;
+    color: $text-color-secondary;
+    word-break: break-all;
+  }
+
+  &__options {
+    @include card-base;
+
+    h2 {
+      font-size: 18px;
+      color: $text-color;
+      margin-bottom: 20px;
+    }
+  }
+
+  &__options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__option-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  &__option-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid $bg-color-dark;
+    border-radius: $border-radius;
+    font-size: 16px;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+
+    &:disabled {
+      background: $bg-color;
+      cursor: not-allowed;
+    }
+  }
+
+  &__option-remove {
+    @include button-danger;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  &__add-option {
+    @include button-base;
+    width: 100%;
+    margin-top: 12px;
+    background: $bg-color;
+    color: $text-color-secondary;
+    border: 2px dashed $bg-color-dark;
+
+    &:hover {
+      background: $bg-color-dark;
+      border-color: $text-color-secondary;
+    }
+  }
+
+  &__controls {
+    @include card-base;
+
+    h2 {
+      font-size: 18px;
+      color: $text-color;
+      margin-bottom: 20px;
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__btn {
+    @include button-base;
+    width: 100%;
+
+    &--primary {
+      @include button-primary;
+      width: 100%;
+    }
+
+    &--success {
+      @include button-success;
+      width: 100%;
+    }
+
+    &--danger {
+      @include button-danger;
+      width: 100%;
+    }
+  }
+
+  &__results {
+    @include card-base;
+
+    h2 {
+      font-size: 18px;
+      color: $text-color;
+      margin-bottom: 20px;
+    }
+  }
+
+  &__results-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__result-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__result-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: $text-color;
+  }
+
+  &__result-bar {
+    height: 24px;
+    background: $bg-color;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  &__result-fill {
+    height: 100%;
+    background: linear-gradient(90deg, $primary-color, #69c0ff);
+    border-radius: 12px;
+    transition: width $transition-normal;
+  }
+
+  &__players-list {
+    @include card-base;
+    grid-column: span 2;
+
+    h2 {
+      font-size: 18px;
+      color: $text-color;
+      margin-bottom: 20px;
+    }
+  }
+
+  &__players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  &__player-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    background: $bg-color;
+    border-radius: $border-radius;
+    border: 2px solid transparent;
+    transition: all $transition-fast;
+
+    &--voted {
+      background: #e6f7ff;
+      border: 3px solid $primary-color;
+      box-shadow: 0 0 8px rgba(24, 144, 255, 0.4);
+    }
+
+    &--eliminated {
+      background: #fff1f0;
+      border: 2px solid $error-color;
+      opacity: 0.6;
+    }
+  }
+
+  &__player-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: $text-color;
+    margin-bottom: 4px;
+  }
+
+  &__player-vote {
+    font-size: 12px;
+    color: $primary-color;
+  }
+
+  &__player-status {
+    font-size: 12px;
+    color: $error-color;
+  }
+
+  &__no-data {
+    color: $text-color-disabled;
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+  }
+
+  // 历史记录样式
+  &__history {
+    @include card-base;
+    grid-column: span 2;
+
+    h2 {
+      font-size: 18px;
+      color: $text-color;
+      margin-bottom: 20px;
+    }
+  }
+
+  &__history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__history-item {
+    background: $bg-color;
+    border-radius: $border-radius;
+    padding: 16px;
+    border-left: 4px solid $primary-color;
+  }
+
+  &__history-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__history-round {
+    font-weight: 600;
+    color: $primary-color;
+    font-size: 16px;
+  }
+
+  &__history-tie {
+    background: #fff7e6;
+    color: #d46b08;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    border: 1px solid #ffd591;
+  }
+
+  &__history-options {
+    font-size: 14px;
+    color: $text-color-secondary;
+  }
+
+  &__history-details {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  &__history-survivors,
+  &__history-eliminated {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  &__history-label {
+    font-size: 14px;
+    color: $text-color-secondary;
+    white-space: nowrap;
+  }
+
+  &__history-names {
+    font-size: 14px;
+    font-weight: 500;
+
+    &--success {
+      color: $success-color;
+    }
+
+    &--danger {
+      color: $error-color;
+    }
+  }
+}
+
+// 响应式
+@media (max-width: 768px) {
+  .host-page {
+    &__content {
+      grid-template-columns: 1fr;
+    }
+
+    &__players-list,
+    &__history {
+      grid-column: span 1;
+    }
+
+    &__history-details {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+}
