@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { message } from 'antd';
 import { api, createHostWebSocket, getVotePageUrl } from '../../services/api';
 import { gameConfig } from '../../config/game.config';
 import './HostPage.scss';
@@ -31,7 +32,6 @@ const HostPage = () => {
   // 加载和错误状态
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
   
   // WebSocket 引用
   const wsRef = useRef(null);
@@ -223,10 +223,9 @@ const HostPage = () => {
     try {
       const result = await api.refreshQRCode();
       setSessionId(result.session_id);
-      setSuccessMsg('二维码已刷新，旧二维码已失效');
-      setTimeout(() => setSuccessMsg(''), 3000);
+      message.success('二维码已刷新，旧二维码已失效');
     } catch (err) {
-      setError(err.message || '刷新二维码失败');
+      message.error(err.message || '刷新二维码失败');
     } finally {
       setIsLoading(false);
     }
@@ -236,15 +235,13 @@ const HostPage = () => {
   const loadPreset = async () => {
     setIsLoading(true);
     setError('');
-    setSuccessMsg('');
     
     try {
       const result = await api.loadPresetOptions();
       setInputOptions(result.options.map(o => o.name));
-      setSuccessMsg(result.message);
-      setTimeout(() => setSuccessMsg(''), 3000);
+      message.success(result.message);
     } catch (err) {
-      setError(err.message || '加载预设失败');
+      message.error(err.message || '加载预设失败');
     } finally {
       setIsLoading(false);
     }
@@ -381,12 +378,6 @@ const HostPage = () => {
       {error && (
         <div className="host-page__error-banner">
           {error}
-        </div>
-      )}
-
-      {successMsg && (
-        <div className="host-page__success-banner">
-          {successMsg}
         </div>
       )}
 
